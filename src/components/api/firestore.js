@@ -5,47 +5,47 @@ async function getLocalLibrary() {
         process.env.REACT_APP_FIRESTORE_URL + "/documents/library"
     );
 
-    return res.data.documents.map((d) => dto(d));
+    return res.data.documents.map((d) => otd(d));
 }
-async function putLocalLibrary(book_data) {
+async function putLocalLibrary(bookData) {
     let res = axios.post(
         process.env.REACT_APP_FIRESTORE_URL + "/documents/library",
-        dto(book_data)
+        dto(bookData)
     );
 
     return res;
 }
 
-function dto(book_data) {
+function dto(bookData) {
     return {
         fields: {
-            name: { stringValue: book_data.name },
-            author: { stringValue: book_data.author },
-            publish_date: { timestampValue: book_data.publish_date },
-            publisher: { stringValue: book_data.publisher },
-            isbn: { integerValue: book_data.isbn },
-            price: { integerValue: book_data.price },
-            image_url: { stringValue: book_data.image_url },
-            star: { integerValue: book_data.star },
-            memo: { stringValue: book_data.memo },
+            name: { stringValue: bookData.name },
+            author: { stringValue: bookData.author },
+            publishDate: { timestampValue: bookData.publishDate },
+            publisher: { stringValue: bookData.publisher },
+            isbn: { integerValue: bookData.isbn },
+            price: { integerValue: bookData.price },
+            imageUrl: { stringValue: bookData.imageUrl },
+            star: { integerValue: bookData.star },
+            memo: { stringValue: bookData.memo },
         },
     };
 }
 
-function otd(object_data) {
-    let book_data = {
-        name: object_data.fields.name.stringValue,
-        author: object_data.fields.author.stringValue,
-        publish_date: object_data.fields.publish_date.timestampValue,
-        publisher: object_data.fields.publisher.stringValue,
-        isbn: object_data.fields.isbn.integerValue,
-        price: object_data.fields.price.integerValue,
-        image_url: object_data.fields.image_url.stringValue,
-        star: object_data.fields.star.integerValue,
-        memo: object_data.fields.memo.stringValue,
+function otd(objectData) {
+    let bookData = {
+        name: objectData.fields.name.stringValue,
+        author: objectData.fields.author.stringValue,
+        publishDate: objectData.fields.publishDate.timestampValue,
+        publisher: objectData.fields.publisher.stringValue,
+        isbn: objectData.fields.isbn.integerValue,
+        price: objectData.fields.price.integerValue,
+        imageUrl: objectData.fields.imageUrl.stringValue,
+        star: objectData.fields.star.integerValue,
+        memo: objectData.fields.memo.stringValue,
     };
 
-    return book_data;
+    return bookData;
 }
 
 export { getLocalLibrary, putLocalLibrary };
