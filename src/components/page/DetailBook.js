@@ -1,8 +1,7 @@
 import { Container, Row, Col, Image } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { getLocalLibrary } from "../api/firestore";
-import ReactStars from "react-rating-stars-component";
+import * as library from "../api/firestore";
 import { Rating } from "@mui/material";
 
 //디자인 참조할 곳 https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=291370219
@@ -25,7 +24,7 @@ function DetailBook() {
     const [value, setValue] = useState(3);
 
     useEffect(() => {
-        getLocalLibrary().then((res) => setBookData(res[0]));
+        library.getLocalLibrary().then((res) => setBookData(res[0]));
     }, []);
 
     return (

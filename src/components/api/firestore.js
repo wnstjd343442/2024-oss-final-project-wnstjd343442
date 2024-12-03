@@ -16,6 +16,30 @@ async function putLocalLibrary(bookData) {
     return res;
 }
 
+async function getListLocalLibrary(page, pageSize = 12) {
+    const res = await axios.post(
+        process.env.REACT_APP_FIRESTORE_URL + "/documents:runQuery",
+        {
+            structuredQuery: {
+                offset: (page - 1) * 12,
+                limit: pageSize,
+            },
+        }
+    );
+
+    if (page > 1) return res.data.slice(1).map((o) => otd(o.document));
+    else return res.data.map((o) => otd(o.document));
+}
+
+async function getCountListLocalLibrary() {
+    const res = await axios.post(
+        process.env.REACT_APP_FIRESTORE_URL + "/documents:runAggregationQuery",
+        { structuredAggregationQuery: { aggregations: [{ count: {} }] } }
+    );
+
+    return res.data[0].result.aggregateFields.field_1.integerValue;
+}
+
 function dto(bookData) {
     return {
         fields: {
@@ -48,4 +72,9 @@ function otd(objectData) {
     return bookData;
 }
 
-export { getLocalLibrary, putLocalLibrary };
+export {
+    getLocalLibrary,
+    getCountListLocalLibrary,
+    putLocalLibrary,
+    getListLocalLibrary,
+};
