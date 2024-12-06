@@ -1,4 +1,4 @@
-import { Container, Row, Col, Image } from "react-bootstrap";
+import { Container, Row, Col, Image, Form, Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import * as library from "../api/firestore";
@@ -7,7 +7,7 @@ import { Rating } from "@mui/material";
 //디자인 참조할 곳 https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=291370219
 
 function DetailBook() {
-    const bookIsbn = useParams();
+    let { isbn } = useParams();
 
     const [bookData, setBookData] = useState({
         name: "제목없음",
@@ -24,7 +24,7 @@ function DetailBook() {
     const [value, setValue] = useState(3);
 
     useEffect(() => {
-        library.getLocalLibrary().then((res) => setBookData(res[0]));
+        library.getLocalLibrary(isbn).then((res) => setBookData(res));
     }, []);
 
     return (
@@ -80,6 +80,13 @@ function DetailBook() {
                                         setValue(newValue);
                                     }}
                                 />
+                            </Col>
+                            <Col>
+                                <Form.Group>
+                                    <Form.Label>Memo</Form.Label>
+                                    <Form.Control as="textarea" />
+                                </Form.Group>
+                                <Button className="float-end mt-2">Save</Button>
                             </Col>
                         </Row>
                     </Col>

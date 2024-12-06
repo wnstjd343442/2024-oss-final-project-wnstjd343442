@@ -1,11 +1,11 @@
 import axios from "axios";
 
-async function getLocalLibrary() {
+async function getLocalLibrary(isbn) {
     let res = await axios.get(
-        process.env.REACT_APP_FIRESTORE_URL + "/documents/library"
+        process.env.REACT_APP_FIRESTORE_URL + "/documents/library/" + isbn
     );
 
-    return res.data.documents.map((d) => otd(d));
+    return otd(res.data);
 }
 async function putLocalLibrary(bookData) {
     let res = axios.post(
