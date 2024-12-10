@@ -1,16 +1,36 @@
 import axios from "axios";
+import QueryString from "qs";
+
+axios.defaults.paramsSerializer = (params) => {
+    return QueryString.stringify(params, {
+        arrayFormat: "repeat",
+        allowDots: true,
+    });
+};
 
 async function getLocalLibrary(isbn) {
     let res = await axios.get(
         process.env.REACT_APP_FIRESTORE_URL + "/documents/library/" + isbn
     );
 
-    return otd(res.data);
+    return otd(res.data.fields);
 }
-async function putLocalLibrary(bookData) {
+async function createLocalLibrary(bookData) {
     let res = axios.post(
         process.env.REACT_APP_FIRESTORE_URL + "/documents/library",
-        dto(bookData)
+        { fields: dto(bookData) }
+    );
+
+    return res;
+}
+
+async function updateLocalLibrary(isbn, bookData) {
+    let res = axios.patch(
+        process.env.REACT_APP_FIRESTORE_URL + "/documents/library/" + isbn,
+        {
+            fields: dto(bookData),
+        },
+        { params: { updateMask: { fieldPaths: Object.keys(bookData) } } }
     );
 
     return res;
@@ -27,8 +47,8 @@ async function getListLocalLibrary(page, pageSize = 12) {
         }
     );
 
-    if (page > 1) return res.data.slice(1).map((o) => otd(o.document));
-    else return res.data.map((o) => otd(o.document));
+    if (page > 1) return res.data.slice(1).map((o) => otd(o.document.fields));
+    else return res.data.map((o) => otd(o.document.fields));
 }
 
 async function getCountListLocalLibrary() {
@@ -41,40 +61,38 @@ async function getCountListLocalLibrary() {
 }
 
 function dto(bookData) {
-    return {
-        fields: {
-            name: { stringValue: bookData.name },
-            author: { stringValue: bookData.author },
-            publishDate: { timestampValue: bookData.publishDate },
-            publisher: { stringValue: bookData.publisher },
-            isbn: { integerValue: bookData.isbn },
-            price: { integerValue: bookData.price },
-            imageUrl: { stringValue: bookData.imageUrl },
-            star: { integerValue: bookData.star },
-            memo: { stringValue: bookData.memo },
-        },
-    };
+    let fields = {};
+    Object.keys(bookData).forEach((fieldName) => {
+        if (bookData[fieldName] instanceof Date)
+            fields[fieldName] = {
+                timestampValue: bookData[fieldName].toISOString(),
+            };
+        else if (typeof bookData[fieldName] == "string")
+            fields[fieldName] = { stringValue: bookData[fieldName] };
+        else if (typeof bookData[fieldName] == "number")
+            fields[fieldName] = {
+                integerValue: bookData[fieldName].toString(),
+            };
+    });
+    return fields;
 }
 
 function otd(objectData) {
-    let bookData = {
-        name: objectData.fields.name.stringValue,
-        author: objectData.fields.author.stringValue,
-        publishDate: objectData.fields.publishDate.timestampValue,
-        publisher: objectData.fields.publisher.stringValue,
-        isbn: objectData.fields.isbn.integerValue,
-        price: objectData.fields.price.integerValue,
-        imageUrl: objectData.fields.imageUrl.stringValue,
-        star: objectData.fields.star.integerValue,
-        memo: objectData.fields.memo.stringValue,
-    };
-
+    let bookData = {};
+    Object.keys(objectData).forEach((fieldName) => {
+        let type = Object.keys(objectData[fieldName])[0];
+        let res = objectData[fieldName][type];
+        if (type == "integerValue") res = Number(res);
+        else if (type == "timestampValue") res = new Date(res);
+        bookData[fieldName] = res;
+    });
     return bookData;
 }
 
 export {
     getLocalLibrary,
     getCountListLocalLibrary,
-    putLocalLibrary,
+    createLocalLibrary,
     getListLocalLibrary,
+    updateLocalLibrary,
 };
