@@ -66,6 +66,7 @@ async function getListLocalLibrary(page, filterStar = 0, pageSize = 12) {
         }
     );
 
+    if (!res.data[0].hasOwnProperty("document")) return []; // 검색 결과 없음
     if (page > 1) return res.data.slice(1).map((o) => otd(o.document.fields));
     else return res.data.map((o) => otd(o.document.fields));
 }
