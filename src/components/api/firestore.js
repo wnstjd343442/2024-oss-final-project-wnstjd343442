@@ -45,13 +45,23 @@ async function delLocalLibrary(isbn) {
     return res;
 }
 
-async function getListLocalLibrary(page, pageSize = 12) {
+async function getListLocalLibrary(page, filterStar = 0, pageSize = 12) {
     const res = await axios.post(
         process.env.REACT_APP_FIRESTORE_URL + "/documents:runQuery",
         {
             structuredQuery: {
                 offset: (page - 1) * 12,
                 limit: pageSize,
+                where: {
+                    fieldFilter: {
+                        op: "GREATER_THAN_OR_EQUAL",
+                        value: { integerValue: filterStar },
+                        field: {
+                            fieldPath: "star",
+                        },
+                    },
+                },
+                from: [{ collectionId: "library" }],
             },
         }
     );
@@ -60,10 +70,26 @@ async function getListLocalLibrary(page, pageSize = 12) {
     else return res.data.map((o) => otd(o.document.fields));
 }
 
-async function getCountListLocalLibrary() {
+async function getCountListLocalLibrary(filterStar) {
     const res = await axios.post(
         process.env.REACT_APP_FIRESTORE_URL + "/documents:runAggregationQuery",
-        { structuredAggregationQuery: { aggregations: [{ count: {} }] } }
+        {
+            structuredAggregationQuery: {
+                aggregations: [{ count: {} }],
+                structuredQuery: {
+                    where: {
+                        fieldFilter: {
+                            op: "GREATER_THAN_OR_EQUAL",
+                            value: { integerValue: filterStar },
+                            field: {
+                                fieldPath: "star",
+                            },
+                        },
+                    },
+                    from: [{ collectionId: "library" }],
+                },
+            },
+        }
     );
 
     return res.data[0].result.aggregateFields.field_1.integerValue;
