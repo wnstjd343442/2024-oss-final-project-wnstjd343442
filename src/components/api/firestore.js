@@ -45,25 +45,24 @@ async function delLocalLibrary(isbn) {
     return res;
 }
 
-async function getListLocalLibrary(page, filterStar = 0, pageSize = 12) {
+async function getListLocalLibrary(page, search_query = null, pageSize = 12) {
+    const query = {
+        structuredQuery: {
+            offset: (page - 1) * 12,
+            limit: pageSize,
+            where: {
+                compositeFilter: {
+                    op: "AND",
+                    filters: qtf(search_query),
+                },
+            },
+            from: [{ collectionId: "library" }],
+        },
+    };
+
     const res = await axios.post(
         process.env.REACT_APP_FIRESTORE_URL + "/documents:runQuery",
-        {
-            structuredQuery: {
-                offset: (page - 1) * 12,
-                limit: pageSize,
-                where: {
-                    fieldFilter: {
-                        op: "GREATER_THAN_OR_EQUAL",
-                        value: { integerValue: filterStar },
-                        field: {
-                            fieldPath: "star",
-                        },
-                    },
-                },
-                from: [{ collectionId: "library" }],
-            },
-        }
+        query
     );
 
     if (!res.data[0].hasOwnProperty("document")) return []; // 검색 결과 없음
@@ -71,7 +70,7 @@ async function getListLocalLibrary(page, filterStar = 0, pageSize = 12) {
     else return res.data.map((o) => otd(o.document.fields));
 }
 
-async function getCountListLocalLibrary(filterStar) {
+async function getCountListLocalLibrary(search_query) {
     const res = await axios.post(
         process.env.REACT_APP_FIRESTORE_URL + "/documents:runAggregationQuery",
         {
@@ -79,12 +78,9 @@ async function getCountListLocalLibrary(filterStar) {
                 aggregations: [{ count: {} }],
                 structuredQuery: {
                     where: {
-                        fieldFilter: {
-                            op: "GREATER_THAN_OR_EQUAL",
-                            value: { integerValue: filterStar },
-                            field: {
-                                fieldPath: "star",
-                            },
+                        compositeFilter: {
+                            op: "AND",
+                            filters: qtf(search_query),
                         },
                     },
                     from: [{ collectionId: "library" }],
@@ -94,6 +90,31 @@ async function getCountListLocalLibrary(filterStar) {
     );
 
     return res.data[0].result.aggregateFields.field_1.integerValue;
+}
+
+function qtf(search_query) {
+    const search_filter = [];
+    if (search_query.hasOwnProperty("star"))
+        search_filter.push({
+            fieldFilter: {
+                op: "GREATER_THAN_OR_EQUAL",
+                value: { integerValue: search_query.star },
+                field: { fieldPath: "star" },
+            },
+        });
+    if (
+        search_query.hasOwnProperty("author") &&
+        search_query.author.length > 0
+    ) {
+        search_filter.push({
+            fieldFilter: {
+                op: "EQUAL",
+                value: { stringValue: search_query.author },
+                field: { fieldPath: "author" },
+            },
+        });
+    }
+    return search_filter;
 }
 
 function dto(bookData) {
