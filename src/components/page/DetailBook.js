@@ -20,7 +20,7 @@ function DetailBook() {
     const [bookData, setBookData] = useState({
         name: "제목없음",
         author: "작가 미상",
-        publishData: "출판연도 미상",
+        publishDate: "출판연도 미상",
         publisher: "출판사 없음",
         isbn: undefined,
         price: "없음",
@@ -160,11 +160,15 @@ function DetailBook() {
                     </Col>
                 </Row>
             </Container>
-            <EditBookModal
-                show={editModalShow}
-                setShow={setEditModalShow}
-                bookData={bookData}
-            />
+            {bookData.isbn != undefined ? (
+                <EditBookModal
+                    show={editModalShow}
+                    setShow={setEditModalShow}
+                    bookData={bookData}
+                />
+            ) : (
+                <div></div>
+            )}
         </div>
     );
 }
