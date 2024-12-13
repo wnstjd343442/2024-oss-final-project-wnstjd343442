@@ -61,12 +61,22 @@ function ListLocalBook() {
                         </Col>
                         <Col xs={12}>
                             <span>작가:</span>
-                            <Form.Control type="text" value={author} />
+                            <Form.Control
+                                type="text"
+                                name="author"
+                                defaultValue={author}
+                            />
                         </Col>
                         <Col>
                             <Button
                                 varient="outline-primary"
                                 className="float-end mt-2"
+                                onClick={() => {
+                                    setAuthor(
+                                        document.getElementsByName("author")[0]
+                                            .value
+                                    );
+                                }}
                             >
                                 검색하기
                             </Button>

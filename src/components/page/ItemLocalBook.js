@@ -21,15 +21,15 @@ function ItemLocalBook(props) {
                 <Card.Body>
                     <Card.Title>{props.bookData.name}</Card.Title>
                     <Card.Text className="text-secondary">
-                        <a
-                            href=""
-                            onClick={() => {
+                        <span
+                            onClick={(event) => {
+                                event.stopPropagation();
                                 props.setAuthor(props.bookData.author);
                             }}
-                            className="text-decoration-none"
+                            className="link-primary"
                         >
                             {props.bookData.author}
-                        </a>
+                        </span>
                         <span> · {props.bookData.publisher}</span>
                     </Card.Text>
                     <Rating value={props.bookData.star} readOnly />
