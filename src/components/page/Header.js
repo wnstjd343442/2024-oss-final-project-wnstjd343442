@@ -78,6 +78,7 @@ function Header() {
                                     isbn={item.isbn}
                                     publisher={item.publisher}
                                     datetime={item.datetime}
+                                    price={item.price}
                                 />
                             </li>
                         ))}

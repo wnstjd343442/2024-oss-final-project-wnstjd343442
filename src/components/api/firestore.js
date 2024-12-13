@@ -17,8 +17,9 @@ async function getLocalLibrary(isbn) {
 }
 async function createLocalLibrary(bookData) {
     let res = axios.post(
-        process.env.REACT_APP_FIRESTORE_URL + "/documents/library",
-        { fields: dto(bookData) }
+        process.env.REACT_APP_FIRESTORE_URL + "/documents/library/",
+        { fields: dto(bookData) },
+        { params: { documentId: bookData.isbn } }
     );
 
     return res;

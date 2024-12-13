@@ -7,7 +7,7 @@ import {
     Button,
     Placeholder,
 } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import * as library from "../api/firestore";
 import { Rating } from "@mui/material";
@@ -53,12 +53,19 @@ function DetailBook() {
                         <Row className="gy-2">
                             <Col xs={12}>
                                 <Button
+                                    as={Link}
+                                    to="/"
+                                    className="float-end m-2"
+                                >
+                                    뒤로
+                                </Button>
+                                <Button
                                     className="float-end mt-2"
                                     onClick={() => {
                                         setEditModalShow(true);
                                     }}
                                 >
-                                    Edit
+                                    수정
                                 </Button>
                             </Col>
                             <Col xs={12}>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BookOpen, Calendar, Building2, Barcode } from "lucide-react";
 import "./../css/SearchItem.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import * as library from "../api/firestore";
 
 const SearchItem = ({
     thumbnail,
@@ -10,6 +11,7 @@ const SearchItem = ({
     isbn,
     publisher,
     datetime,
+    price,
 }) => {
     const [showModal, setShowModal] = useState(false);
     const [memo, setMemo] = useState("");
@@ -41,40 +43,25 @@ const SearchItem = ({
 
     const handleSave = async () => {
         const bookData = {
-            thumbnail,
-            title,
-            author,
-            isbn,
+            imageUrl: thumbnail,
+            name: title,
+            author: author[0],
+            isbn: isbn.split(" ").pop(),
             publisher,
-            datetime,
+            publishDate: new Date(datetime),
             memo,
-            rating,
+            star: rating,
+            price,
         };
 
-        console.log(bookData);
-        try {
-            const response = await fetch(
-                "https://your-firebase-project.firebaseio.com/books.json",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(bookData),
-                }
-            );
-
-            if (response.ok) {
+        library
+            .createLocalLibrary(bookData)
+            .then(() => {
                 alert("책이 성공적으로 저장되었습니다!");
-                console.log("저장된 데이터:", await response.json());
-            } else {
-                console.error("저장 실패:", response.status);
-                alert("책 저장에 실패했습니다.");
-            }
-        } catch (error) {
-            console.error("Firebase 저장 중 오류:", error);
-            alert("저장 중 문제가 발생했습니다.");
-        }
+            })
+            .catch(() => {
+                alert("저장 중 문제가 발생하였습니다.");
+            });
 
         setShowModal(false);
         setMemo("");
