@@ -5,14 +5,7 @@ import ListLocalBook from "./components/page/ListLocalBook";
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <header>
-        <div className="bg-green-700 text-white py-2">
-          <h1 className="text-center text-xl font-bold tracking-wide">
-            한동문고
-          </h1>
-        </div>
-        <Header />
-      </header>
+      <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ListLocalBook />

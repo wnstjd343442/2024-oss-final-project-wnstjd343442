@@ -28,7 +28,6 @@ function Header() {
             const response = await kakao.get("", {
                 params: { query },
             });
-            console.log(response.data.documents);
             setResults(response.data.documents);
         } catch (err) {
             setError("검색 중 오류가 발생했습니다.");
@@ -44,7 +43,12 @@ function Header() {
 
     return (
         <div className="header-container">
-            <Link to="/" className="arrow-icon"></Link>
+            {/* 로고 영역 */}
+            <div className="logo-container">
+                <Link to="/" className="logo-link">
+                    <h1 className="logo-text">한동문고</h1>
+                </Link>
+            </div>
             <div className="input-container">
                 <input
                     type="text"

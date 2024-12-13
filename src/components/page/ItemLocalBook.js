@@ -1,65 +1,91 @@
-import { Card, Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { Card, Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { Rating } from "@mui/material";
 import * as library from "./../api/firestore";
-import { Modal } from "react-bootstrap";
-import { useState } from "react";
 
 function ItemLocalBook(props) {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
 
   return (
-    <div>
+    <>
       <Card
-        style={{ width: "20rem" }}
-        onClick={() => {
-          navigate("/detail/" + props.bookData.isbn);
+        style={{
+          width: "16rem",
+          height: "28rem",
+          margin: "auto",
         }}
+        className="mb-4 shadow-sm text-center"
+        onClick={() => navigate("/detail/" + props.bookData.isbn)}
       >
-        <Card.Img variant="top" src={props.bookData.imageUrl} />
-        <Card.Body>
-          <Card.Title>{props.bookData.name}</Card.Title>
-          <Card.Text className="text-secondary">
+        <div
+          style={{
+            height: "18rem",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            overflow: "hidden",
+          }}
+        >
+          <Card.Img
+            variant="top"
+            src={props.bookData.imageUrl}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+        <Card.Body className="d-flex flex-column">
+          <Card.Title
+            className="text-truncate mb-2"
+            style={{ fontSize: "1rem", fontWeight: "bold" }}
+          >
+            {props.bookData.name}
+          </Card.Title>
+          <Card.Text className="text-muted mb-2" style={{ fontSize: "0.9rem" }}>
             <span
-              onClick={(event) => {
-                event.stopPropagation();
+              onClick={(e) => {
+                e.stopPropagation();
                 props.setAuthor(props.bookData.author);
               }}
-              className="link-primary"
+              className="text-primary"
+              style={{ cursor: "pointer" }}
             >
               {props.bookData.author}
             </span>
-            <span> · {props.bookData.publisher}</span>
+            <span className="mx-1">·</span>
+            <span>{props.bookData.publisher}</span>
           </Card.Text>
-          <Rating value={props.bookData.star} readOnly />
-          <Button
-            variant="outline-danger"
-            className="float-end"
-            onClick={(event) => {
-              event.stopPropagation();
-              setShow(true);
-            }}
-          >
-            Delete
-          </Button>
+
+          <div className="mt-auto d-flex justify-content-between align-items-center">
+            <Rating value={props.bookData.star} readOnly size="medium" />
+            <Button
+              variant="outline-danger"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShow(true);
+              }}
+            >
+              삭제
+            </Button>
+          </div>
         </Card.Body>
       </Card>
-      <Modal
-        show={show}
-        onHide={() => {
-          setShow(false);
-        }}
-      >
+
+      <Modal show={show} onHide={() => setShow(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>상품 삭제 확인</Modal.Title>
+          <Modal.Title>도서 삭제</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <p>"{props.bookData.name}"을 삭제하시겠습니까?</p>
-        </Modal.Body>
+        <Modal.Body>"{props.bookData.name}"을 삭제하시겠습니까?</Modal.Body>
         <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShow(false)}>
+            취소
+          </Button>
           <Button
-            variant="outline-danger"
+            variant="danger"
             onClick={() => {
               library.delLocalLibrary(props.bookData.isbn).then(() => {
                 window.location.reload(true);
@@ -68,17 +94,9 @@ function ItemLocalBook(props) {
           >
             삭제
           </Button>
-          <Button
-            variant="outline-primary"
-            onClick={() => {
-              setShow(false);
-            }}
-          >
-            뒤로
-          </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </>
   );
 }
 
