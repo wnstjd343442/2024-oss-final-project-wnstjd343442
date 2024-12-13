@@ -37,6 +37,14 @@ async function updateLocalLibrary(isbn, bookData) {
     return res;
 }
 
+async function delLocalLibrary(isbn) {
+    let res = axios.delete(
+        process.env.REACT_APP_FIRESTORE_URL + "/documents/library/" + isbn
+    );
+
+    return res;
+}
+
 async function getListLocalLibrary(page, pageSize = 12) {
     const res = await axios.post(
         process.env.REACT_APP_FIRESTORE_URL + "/documents:runQuery",
@@ -96,4 +104,5 @@ export {
     createLocalLibrary,
     getListLocalLibrary,
     updateLocalLibrary,
+    delLocalLibrary,
 };

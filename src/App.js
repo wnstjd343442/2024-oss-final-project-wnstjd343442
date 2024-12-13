@@ -5,6 +5,7 @@ import ListLocalBook from "./components/page/ListLocalBook";
 function App() {
     return (
         <div>
+            <p className="text-center">한동문고</p>
             <Header />
             <ListLocalBook />
         </div>

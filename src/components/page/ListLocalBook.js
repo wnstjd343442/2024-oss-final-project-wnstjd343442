@@ -2,7 +2,6 @@ import { Container, Row, Col, Pagination } from "react-bootstrap";
 import * as library from "../api/firestore";
 import ItemLocalBook from "./ItemLocalBook";
 import { useState, useEffect, useRef } from "react";
-import Header from "./Header";
 
 function ListLocalBook() {
     const [localBooks, setLocalBooks] = useState([]);
@@ -53,9 +52,9 @@ function ListLocalBook() {
                     />
                 </Pagination>
 
-                <Row className="g-2">
+                <Row className="g-5">
                     {localBooks.map((bookData, index) => (
-                        <Col key={index}>
+                        <Col key={index} xs={3}>
                             <ItemLocalBook bookData={bookData} />
                         </Col>
                     ))}
