@@ -98,7 +98,7 @@ function qtf(search_query) {
         search_filter.push({
             fieldFilter: {
                 op: "GREATER_THAN_OR_EQUAL",
-                value: { integerValue: search_query.star },
+                value: { doubleValue: search_query.star },
                 field: { fieldPath: "star" },
             },
         });
@@ -128,7 +128,7 @@ function dto(bookData) {
             fields[fieldName] = { stringValue: bookData[fieldName] };
         else if (typeof bookData[fieldName] == "number")
             fields[fieldName] = {
-                integerValue: bookData[fieldName].toString(),
+                doubleValue: bookData[fieldName].toString(),
             };
     });
     return fields;
@@ -139,7 +139,7 @@ function otd(objectData) {
     Object.keys(objectData).forEach((fieldName) => {
         let type = Object.keys(objectData[fieldName])[0];
         let res = objectData[fieldName][type];
-        if (type == "integerValue") res = Number(res);
+        if (type == "doubleValue") res = Number(res);
         else if (type == "timestampValue") res = new Date(res);
         bookData[fieldName] = res;
     });
