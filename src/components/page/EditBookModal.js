@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 function EditBookModal(props) {
     const { bookData, show, setShow } = props;
+    const navigate = useNavigate();
 
     const BookValidationSchema = Yup.object().shape({
         name: Yup.string().required("책 제목은 필수입니다"),
@@ -45,7 +46,8 @@ function EditBookModal(props) {
                     library
                         .updateLocalLibrary(bookData.isbn, data)
                         .then(() => {
-                            useNavigate("/detail/" + bookData.isbn);
+                            alert("책 정보가 수정되었습니다.");
+                            navigate("/");
                         })
                         .catch((error) => {
                             console.error("책 정보 수정 중 오류:", error);
