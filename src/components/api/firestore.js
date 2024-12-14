@@ -136,8 +136,8 @@ function otd(objectData) {
   Object.keys(objectData).forEach((fieldName) => {
     let type = Object.keys(objectData[fieldName])[0];
     let res = objectData[fieldName][type];
-    if (type == "doubleValue") res = Number(res);
-    else if (type == "timestampValue") res = new Date(res);
+    if (type === "doubleValue") res = Number(res);
+    else if (type === "timestampValue") res = new Date(res);
     bookData[fieldName] = res;
   });
   return bookData;
